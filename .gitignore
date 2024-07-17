@@ -8,6 +8,7 @@ requirements.txt
 *.tfstate.backup
 
 # Terraform provider-specific files
+.terraform.lock.hcl
 .terraform/
 
 # Crash log files
