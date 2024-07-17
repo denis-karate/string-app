@@ -1,0 +1,29 @@
+app.py
+Dockerfile
+requirements.txt
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform provider-specific files
+.terraform/
+
+# Crash log files
+crash.log
+
+# Ignore override files as they are usually used to override resources locally
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include .terraformrc and terraform.rc if you have configured these
+.terraformrc
+terraform.rc
+
+# Ignore sensitive files
+*.pem
+*.key
+*.cer
