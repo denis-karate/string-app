@@ -1,20 +1,18 @@
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  config_path = var.kube_config_path
 }
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"
+    config_path = var.kube_config_path
   }
 }
 
-resource "helm_release" "my_app" {
-  name       = "my-app"
-  chart      = "../helm/my-app"
-  namespace  = "default"
-  
-  values = [
-    file("../helm/my-app/values.yaml")
-  ]
+module "helm_release" {
+  source       = "./modules/helm_release"
+  release_name = var.release_name
+  chart_path   = var.chart_path
+  namespace    = var.namespace
+  values_file  = var.values_file
 }
 
