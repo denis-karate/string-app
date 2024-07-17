@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-configmap
+data:
+  init-strings: |
+    INSERT INTO strings (content) VALUES
+    ('Miami1'),
+    ('Milluwake1'),
+    ('GoldenStateWarriors1'),
+    ('LAL1');

@@ -1,0 +1,41 @@
+replicaCount: 1
+
+image:
+  repository: denchikkarate/app
+  tag: v2.3
+  pullPolicy: IfNotPresent
+
+postgres:
+  image:
+    repository: denchikkarate/my-db
+    tag: latest
+  host: postgres
+  username: myuser
+  password: mypassword
+  database: mydatabase
+
+cronjob:
+  schedule: "*/2 * * * *"
+
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30001
+
+ingress:
+  enabled: true
+  host: myapp.local
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+configData:
+  initStrings: |
+    INSERT INTO strings (content) VALUES
+    ('BARCELONA'),
+    ('MC'),
+    ('RM'),
+    ('MU');

@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: add-data-cronjob
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"  
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          initContainers:
+            - name: compare-configmap
+              image: busybox
+              command:
+                - "/bin/sh"
+                - "-c"
+                - |
+                  if [ ! -f /data/previous_config ]; then
+                    echo "First run or config not found, initializing..."
+                    cp /config/init-strings /data/previous_config
+                    exit 0
+                  fi
+                  if ! diff /config/init-strings /data/previous_config; then
+                    echo "Config changed, updating..."
+                    cp /config/init-strings /data/previous_config
+                  else
+                    echo "Config unchanged, exiting..."
+                    exit 1
+                  fi
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /config
+                - name: data-volume
+                  mountPath: /data
+          containers:
+            - name: add-data-container
+              image: postgres:latest  
+              env:
+                - name: PGPASSWORD
+                  value: mypassword 
+              command:
+                - "sh"
+                - "-c"
+                - |
+                  psql -h postgres -U myuser -d mydatabase -f /config/init-strings
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /config
+                  readOnly: true
+                - name: data-volume
+                  mountPath: /data
+          restartPolicy: OnFailure
+          volumes:
+            - name: config-volume
+              configMap:
+                name: data-configmap
+            - name: data-volume
+              persistentVolumeClaim:
+                claimName: data-pvc
+
